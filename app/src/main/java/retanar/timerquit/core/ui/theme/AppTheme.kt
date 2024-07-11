@@ -1,4 +1,4 @@
-package com.featuremodule.core.ui.theme
+package retanar.timerquit.core.ui.theme
 
 import android.app.Activity
 import androidx.compose.foundation.isSystemInDarkTheme

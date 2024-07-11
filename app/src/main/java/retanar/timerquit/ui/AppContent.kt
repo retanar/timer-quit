@@ -1,4 +1,4 @@
-package com.featuremodule.template.ui
+package retanar.timerquit.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

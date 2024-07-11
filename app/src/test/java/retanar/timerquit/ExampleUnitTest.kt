@@ -1,4 +1,4 @@
-package com.featuremodule.template
+package retanar.timerquit
 
 import org.junit.Assert.assertEquals
 import org.junit.Test

@@ -1,12 +1,12 @@
-package com.featuremodule.template
+package retanar.timerquit
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import com.featuremodule.core.ui.theme.AppTheme
-import com.featuremodule.template.ui.AppContent
 import dagger.hilt.android.AndroidEntryPoint
+import retanar.timerquit.core.ui.theme.AppTheme
+import retanar.timerquit.ui.AppContent
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {

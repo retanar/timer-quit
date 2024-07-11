@@ -21,7 +21,7 @@ dependencyResolutionManagement {
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
-rootProject.name = "jeden-timer-app"
+rootProject.name = "lancer-tracker"
 include(
     ":app"
 )

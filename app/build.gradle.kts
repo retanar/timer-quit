@@ -11,11 +11,11 @@ kotlin {
 }
 
 android {
-    namespace = "com.featuremodule.template"
+    namespace = "retanar.timerquit"
     compileSdk = libs.versions.sdk.compile.get().toInt()
 
     defaultConfig {
-        applicationId = "com.featuremodule.template"
+        applicationId = "retanar.timerquit"
         minSdk = libs.versions.sdk.min.get().toInt()
         targetSdk = libs.versions.sdk.compile.get().toInt()
         versionCode = 1

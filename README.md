@@ -91,7 +91,7 @@ exercised.**
 Source: [RenamePackageTask.kt](buildSrc/src/main/kotlin/RenamePackageTask.kt). Example usage:
 
 ```
-./gradlew renamePackage --from com.featuremodule --to my.new.package
+./gradlew renamePackage --from retanar.timerquit --to my.new.package
 ```
 
 Configuration for all custom tasks can be found in root [build.gradle.kts](build.gradle.kts).

@@ -1,4 +1,4 @@
-package com.featuremodule.core.ui
+package retanar.timerquit.core.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

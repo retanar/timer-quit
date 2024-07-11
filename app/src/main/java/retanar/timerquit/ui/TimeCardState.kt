@@ -1,4 +1,4 @@
-package com.featuremodule.template.ui
+package retanar.timerquit.ui
 
 data class TimeCardState(
     val title: String = "",

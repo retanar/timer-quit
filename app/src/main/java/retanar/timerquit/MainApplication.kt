@@ -1,4 +1,4 @@
-package com.featuremodule.template
+package retanar.timerquit
 
 import android.app.Application
 import dagger.hilt.android.HiltAndroidApp

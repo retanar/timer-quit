@@ -4,7 +4,7 @@ plugins {
 }
 
 tasks.register<CreateAndroidModuleTask>("createLibraryModule") {
-    basePackageName = "com.featuremodule"
+    basePackageName = "retanar.timerquit"
 }
 
 tasks.register<RenamePackageTask>("renamePackage")
