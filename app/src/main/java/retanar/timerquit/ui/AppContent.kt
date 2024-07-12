@@ -26,9 +26,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
 internal fun AppContent(viewModel: MainVM = hiltViewModel()) {
-//    val navController = rememberNavController()
-//    val backStackEntry by navController.currentBackStackEntryAsState()
-
     val timeCards by viewModel.timeCards
 
     Scaffold(

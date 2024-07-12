@@ -16,6 +16,7 @@ javapoet = "1.13.0"
 detekt = "1.23.4"
 ktlint = "12.1.0"
 ktlint-compose-rules = "0.3.15"
+room = "2.6.1"
 retrofit = "2.11.0"
 moshi = "1.15.1"
 collections-immutable = "0.3.7"
@@ -63,6 +64,10 @@ retrofit-converter-moshi = { module = "com.squareup.retrofit2:converter-moshi", 
 moshi = { module = "com.squareup.moshi:moshi", version.ref = "moshi" }
 moshi-kotlin-codegen = { module = "com.squareup.moshi:moshi-kotlin-codegen", version.ref = "moshi" }
 
+room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
+room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
+room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+
 glide-compose = { module = "com.github.bumptech.glide:compose", version.ref = "glide-compose" }
 
 # Testing
@@ -78,6 +83,7 @@ compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
 compose = ["androidx-lifecycle-runtime-compose", "compose-ui", "compose-ui-graphics",
     "compose-ui-tooling-preview", "compose-material3", "compose-runtime"]
 network = ["retrofit", "retrofit-converter-moshi", "moshi"]
+room = ["room-ktx", "room-runtime"]
 
 [plugins]
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
