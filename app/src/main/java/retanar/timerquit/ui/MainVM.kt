@@ -8,12 +8,14 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import retanar.timerquit.data.TimeEntity
 import retanar.timerquit.data.TimesDao
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
 
 @HiltViewModel
 internal class MainVM @Inject constructor(
-    dao: TimesDao,
+    private val dao: TimesDao,
 ) : ViewModel() {
     private val timeEntities = dao.getAllFlow()
         .stateIn(
@@ -22,6 +24,7 @@ internal class MainVM @Inject constructor(
             initialValue = emptyList(),
         )
     val timeCards = mutableStateOf(emptyList<TimeCardState>())
+    val dialogType = mutableStateOf<DialogType>(DialogType.None)
 
     init {
         viewModelScope.launch {
@@ -36,9 +39,32 @@ internal class MainVM @Inject constructor(
         timeCards.value = timeEntities.value.map { entity ->
             TimeCardState(
                 title = entity.title,
-                timeString = (currentTime - entity.timeUtcMs).toString(),
-                record = entity.longestTimeMs.takeUnless { it == 0L }?.toString()
+                timeString = (currentTime - entity.timeUtcMs).durationString(),
+                record = entity.longestTimeMs.takeUnless { it == 0L }?.durationString(),
             )
         }
     }
+
+    fun setDialog(type: DialogType) {
+        dialogType.value = type
+    }
+
+    fun addTime(title: String) = viewModelScope.launch {
+        dao.insert(
+            TimeEntity(
+                title = title,
+                timeUtcMs = System.currentTimeMillis(),
+            ),
+        )
+    }
+
+    private fun Long.durationString() =
+        milliseconds.toComponents { days, hours, minutes, seconds, _ ->
+            "${days}d ${hours}h ${minutes}m ${seconds}s"
+        }
+}
+
+sealed interface DialogType {
+    data object Add : DialogType
+    data object None : DialogType
 }
