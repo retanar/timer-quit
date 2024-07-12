@@ -4,6 +4,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.stateIn
@@ -11,6 +12,7 @@ import kotlinx.coroutines.launch
 import retanar.timerquit.data.TimeEntity
 import retanar.timerquit.data.TimesDao
 import javax.inject.Inject
+import kotlin.math.max
 import kotlin.time.Duration.Companion.milliseconds
 
 @HiltViewModel
@@ -32,12 +34,19 @@ internal class MainVM @Inject constructor(
                 updateCardStates()
             }
         }
+        viewModelScope.launch {
+            while (true) {
+                delay(1000)
+                updateCardStates()
+            }
+        }
     }
 
     private fun updateCardStates() {
         val currentTime = System.currentTimeMillis()
         timeCards.value = timeEntities.value.map { entity ->
             TimeCardState(
+                id = entity.id,
                 title = entity.title,
                 timeString = (currentTime - entity.timeUtcMs).durationString(),
                 record = entity.longestTimeMs.takeUnless { it == 0L }?.durationString(),
@@ -62,9 +71,18 @@ internal class MainVM @Inject constructor(
         milliseconds.toComponents { days, hours, minutes, seconds, _ ->
             "${days}d ${hours}h ${minutes}m ${seconds}s"
         }
+
+    fun refreshTime(state: TimeCardState) = viewModelScope.launch {
+        timeEntities.value.find { it.id == state.id }?.let { entity ->
+            // replace record if it was beaten
+            val record = max(System.currentTimeMillis() - entity.timeUtcMs, entity.longestTimeMs)
+            dao.update(entity.copy(timeUtcMs = System.currentTimeMillis(), longestTimeMs = record))
+        }
+    }
 }
 
 sealed interface DialogType {
     data object Add : DialogType
+    data class ResetTime(val state: TimeCardState) : DialogType
     data object None : DialogType
 }

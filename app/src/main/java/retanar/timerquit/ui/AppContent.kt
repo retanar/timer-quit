@@ -48,7 +48,7 @@ internal fun AppContent(viewModel: MainVM = hiltViewModel()) {
     ) { innerPadding ->
         LazyColumn(modifier = Modifier.padding(innerPadding)) {
             items(timeCards) { cardState ->
-                TimeCard(cardState)
+                TimeCard(state = cardState, openDialog = viewModel::setDialog)
             }
         }
     }
@@ -57,11 +57,12 @@ internal fun AppContent(viewModel: MainVM = hiltViewModel()) {
         dialogType = viewModel.dialogType.value,
         onDismiss = { viewModel.setDialog(DialogType.None) },
         onAdd = viewModel::addTime,
+        onRefresh = viewModel::refreshTime,
     )
 }
 
 @Composable
-private fun TimeCard(state: TimeCardState) {
+private fun TimeCard(state: TimeCardState, openDialog: (DialogType) -> Unit) {
     Card(
         modifier = Modifier.padding(all = 4.dp),
     ) {
@@ -80,7 +81,7 @@ private fun TimeCard(state: TimeCardState) {
                 Text(text = state.timeString)
             }
 
-            IconButton(onClick = { /*TODO*/ }) {
+            IconButton(onClick = { openDialog(DialogType.ResetTime(state)) }) {
                 Icon(imageVector = Icons.Default.Refresh, contentDescription = "Refresh time")
             }
         }
@@ -92,7 +93,9 @@ private fun DialogController(
     dialogType: DialogType,
     onDismiss: () -> Unit,
     onAdd: (String) -> Unit,
+    onRefresh: (TimeCardState) -> Unit,
 ) = when (dialogType) {
+    DialogType.None -> {}
     DialogType.Add -> Dialog(onDismissRequest = onDismiss) {
         var text by remember { mutableStateOf("") }
         Card {
@@ -100,7 +103,7 @@ private fun DialogController(
                 Text(text = "Add tracker")
                 TextField(value = text, onValueChange = { text = it })
                 Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                    OutlinedButton(onClick = onDismiss) {
+                    OutlinedButton(onClick = onDismiss, modifier = Modifier.weight(1f)) {
                         Text(text = "Cancel")
                     }
                     Button(
@@ -108,6 +111,7 @@ private fun DialogController(
                             onAdd(text)
                             onDismiss()
                         },
+                        modifier = Modifier.weight(1f),
                     ) {
                         Text(text = "Add")
                     }
@@ -116,5 +120,26 @@ private fun DialogController(
         }
     }
 
-    DialogType.None -> {}
+    is DialogType.ResetTime -> Dialog(onDismissRequest = onDismiss) {
+        Card {
+            Column(modifier = Modifier.padding(all = 16.dp)) {
+                Text(text = "Do you want to reset time for ${dialogType.state.title}?")
+
+                Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                    OutlinedButton(onClick = onDismiss, modifier = Modifier.weight(1f)) {
+                        Text(text = "No")
+                    }
+                    Button(
+                        onClick = {
+                            onRefresh(dialogType.state)
+                            onDismiss()
+                        },
+                        modifier = Modifier.weight(1f),
+                    ) {
+                        Text(text = "Yes")
+                    }
+                }
+            }
+        }
+    }
 }
