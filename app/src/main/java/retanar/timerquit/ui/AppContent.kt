@@ -3,11 +3,8 @@ package retanar.timerquit.ui
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -18,6 +15,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -29,9 +27,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
+import retanar.timerquit.core.ui.theme.AppTheme
 
 @Composable
 internal fun AppContent(viewModel: MainVM = hiltViewModel()) {
@@ -43,8 +43,6 @@ internal fun AppContent(viewModel: MainVM = hiltViewModel()) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = "Add")
             }
         },
-        // Remove this and status bar coloring in AppTheme for edge to edge
-        modifier = Modifier.windowInsetsPadding(WindowInsets.statusBars),
     ) { innerPadding ->
         LazyColumn(modifier = Modifier.padding(innerPadding)) {
             items(timeCards) { cardState ->
@@ -74,11 +72,11 @@ private fun TimeCard(state: TimeCardState, openDialog: (DialogType) -> Unit) {
             Column(
                 modifier = Modifier.padding(all = 16.dp),
             ) {
-                Text(text = state.title)
+                Text(text = state.title, style = MaterialTheme.typography.titleLarge)
                 state.record?.let { record ->
-                    Text(text = "Record $record")
+                    Text(text = "Record $record", style = MaterialTheme.typography.bodyMedium)
                 }
-                Text(text = state.timeString)
+                Text(text = state.timeString, style = MaterialTheme.typography.titleMedium)
             }
 
             IconButton(onClick = { openDialog(DialogType.ResetTime(state)) }) {
@@ -141,5 +139,20 @@ private fun DialogController(
                 }
             }
         }
+    }
+}
+
+@Preview
+@Composable
+private fun TimeCardPreview() {
+    AppTheme {
+        TimeCard(
+            state = TimeCardState(
+                title = "Some title",
+                timeString = "1d 0h 40m 55s",
+                record = "0d 2h 15m 20s",
+            ),
+            openDialog = {},
+        )
     }
 }
