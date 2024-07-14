@@ -9,29 +9,24 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import retanar.timerquit.core.ui.theme.AppTheme
+import retanar.timerquit.ui.DialogType.None
 
 @Composable
 internal fun AppContent(viewModel: MainVM = hiltViewModel()) {
@@ -53,9 +48,10 @@ internal fun AppContent(viewModel: MainVM = hiltViewModel()) {
 
     DialogController(
         dialogType = viewModel.dialogType.value,
-        onDismiss = { viewModel.setDialog(DialogType.None) },
+        onDismiss = { viewModel.setDialog(None) },
         onAdd = viewModel::addTime,
         onRefresh = viewModel::refreshTime,
+        onDelete = viewModel::deleteTime,
     )
 }
 
@@ -79,63 +75,12 @@ private fun TimeCard(state: TimeCardState, openDialog: (DialogType) -> Unit) {
                 Text(text = state.timeString, style = MaterialTheme.typography.titleMedium)
             }
 
-            IconButton(onClick = { openDialog(DialogType.ResetTime(state)) }) {
-                Icon(imageVector = Icons.Default.Refresh, contentDescription = "Refresh time")
-            }
-        }
-    }
-}
-
-@Composable
-private fun DialogController(
-    dialogType: DialogType,
-    onDismiss: () -> Unit,
-    onAdd: (String) -> Unit,
-    onRefresh: (TimeCardState) -> Unit,
-) = when (dialogType) {
-    DialogType.None -> {}
-    DialogType.Add -> Dialog(onDismissRequest = onDismiss) {
-        var text by remember { mutableStateOf("") }
-        Card {
-            Column(modifier = Modifier.padding(all = 16.dp)) {
-                Text(text = "Add tracker")
-                TextField(value = text, onValueChange = { text = it })
-                Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                    OutlinedButton(onClick = onDismiss, modifier = Modifier.weight(1f)) {
-                        Text(text = "Cancel")
-                    }
-                    Button(
-                        onClick = {
-                            onAdd(text)
-                            onDismiss()
-                        },
-                        modifier = Modifier.weight(1f),
-                    ) {
-                        Text(text = "Add")
-                    }
+            Column {
+                IconButton(onClick = { openDialog(DialogType.DeleteConfirmation(state)) }) {
+                    Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete timer")
                 }
-            }
-        }
-    }
-
-    is DialogType.ResetTime -> Dialog(onDismissRequest = onDismiss) {
-        Card {
-            Column(modifier = Modifier.padding(all = 16.dp)) {
-                Text(text = "Do you want to reset time for ${dialogType.state.title}?")
-
-                Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                    OutlinedButton(onClick = onDismiss, modifier = Modifier.weight(1f)) {
-                        Text(text = "No")
-                    }
-                    Button(
-                        onClick = {
-                            onRefresh(dialogType.state)
-                            onDismiss()
-                        },
-                        modifier = Modifier.weight(1f),
-                    ) {
-                        Text(text = "Yes")
-                    }
+                IconButton(onClick = { openDialog(DialogType.ResetConfirmation(state)) }) {
+                    Icon(imageVector = Icons.Default.Refresh, contentDescription = "Refresh time")
                 }
             }
         }

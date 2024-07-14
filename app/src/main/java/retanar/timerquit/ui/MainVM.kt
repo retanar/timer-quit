@@ -30,11 +30,13 @@ internal class MainVM @Inject constructor(
 
     init {
         viewModelScope.launch {
+            // Auto update on database changes
             timeEntities.collectLatest {
                 updateCardStates()
             }
         }
         viewModelScope.launch {
+            // Timer update
             while (true) {
                 delay(1000)
                 updateCardStates()
@@ -79,10 +81,17 @@ internal class MainVM @Inject constructor(
             dao.update(entity.copy(timeUtcMs = System.currentTimeMillis(), longestTimeMs = record))
         }
     }
+
+    fun deleteTime(state: TimeCardState) = viewModelScope.launch {
+        timeEntities.value.find { it.id == state.id }?.let { entity ->
+            dao.delete(entity)
+        }
+    }
 }
 
 sealed interface DialogType {
     data object Add : DialogType
-    data class ResetTime(val state: TimeCardState) : DialogType
+    data class ResetConfirmation(val state: TimeCardState) : DialogType
+    data class DeleteConfirmation(val state: TimeCardState) : DialogType
     data object None : DialogType
 }
