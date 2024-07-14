@@ -35,6 +35,18 @@ android {
                 "proguard-rules.pro",
             )
         }
+        // Build type with release optimizations but debug signing config
+        create("optimizedDebug") {
+            isDebuggable = false
+            isShrinkResources = true
+            isMinifyEnabled = true
+
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro",
+            )
+            signingConfig = signingConfigs.getByName("debug")
+        }
     }
     buildFeatures {
         compose = true
